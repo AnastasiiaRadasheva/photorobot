@@ -3,6 +3,15 @@ from tkinter import simpledialog, Canvas
 from PIL import Image, ImageTk
 import customtkinter as ctk
 import pygame
+import os
+
+
+OUTPUT_DIR = "output"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+pygame.mixer.init()
+pygame.mixer.music.load("Betsy feat. Мария Янковская - Сигма Бой.mp3")  
+muusika_mängib = False  
 
 pildid = {}
 objektid = {}
@@ -31,17 +40,22 @@ def uuenda_osa(nimi, x, y):
     if olemas.get(nimi):
         canvas.delete(objektid[nimi])
 
-    pil_img = Image.open(fail).convert("RGBA").resize((400, 400))
+    pil_img = Image.open(fail).convert("RGBA").resize((400, 440))
     tk_img = ImageTk.PhotoImage(pil_img)
     pildid[nimi] = tk_img
     objektid[nimi] = canvas.create_image(x, y, image=tk_img)
     olemas[nimi] = True
 
-def mängi_muusika():
-    pygame.mixer.music.play(loops=-1)
-
-def peata_muusika():
-    pygame.mixer.music.stop()
+def toggle_muusika():
+    global muusika_mängib
+    if muusika_mängib:
+        pygame.mixer.music.stop()
+        muusika_nupp.configure(text="Mängi muusikat")
+        muusika_mängib = False
+    else:
+        pygame.mixer.music.play(loops=-1)
+        muusika_nupp.configure(text="Peata muusika")
+        muusika_mängib = True
 
 def salvesta_nägu():
     failinimi = simpledialog.askstring("Salvesta pilt", "Sisesta faili nimi (ilma laiendita):")
@@ -62,11 +76,9 @@ def salvesta_nägu():
         osa = Image.open(failitee).convert("RGBA").resize((400, 400))
         lõpp_pilt.alpha_composite(osa)
 
-    lõpp_pilt.save(f"{failinimi}.png")
-    showinfo("Pilt salvestatud", f"Fail on salvestatud nimega {failinimi}.png")
-
-# pygame.mixer.init()
-# pygame.mixer.music.load("Betsy feat. Мария Янковская - Сигма Бой.mp3")
+    save_path = os.path.join(OUTPUT_DIR, f"{failinimi}.png")
+    lõpp_pilt.save(save_path)
+    showinfo("Pilt salvestatud", f"Fail on salvestatud nimega {save_path}")
 
 app = ctk.CTk()
 app.geometry("800x500")
@@ -87,25 +99,14 @@ for osa in osa_pildid.keys():
     uuenda_osa(osa, 200, 200)
 
 
-def nupp_silmad():
-    uuenda_osa("silmad", 200, 200)
-
-def nupp_nina():
-    uuenda_osa("nina", 200, 200)
-
-def nupp_suu():
-    uuenda_osa("suu", 200, 200)
-
-def nupp_juuksur():
-    uuenda_osa("juuksur", 200, 200)
-
-def nupp_acs():
-    uuenda_osa("acs", 200, 200)
-
+def nupp_silmad(): uuenda_osa("silmad", 200, 200)
+def nupp_nina(): uuenda_osa("nina", 200, 200)
+def nupp_suu(): uuenda_osa("suu", 200, 200)
+def nupp_juuksur(): uuenda_osa("juuksur", 200, 200)
+def nupp_acs(): uuenda_osa("acs", 200, 200)
 
 frame = ctk.CTkFrame(app)
 frame.pack(side="left", padx=10, pady=10)
-
 
 nuppu_seaded = {
     "width": 150, "height": 40,
@@ -115,21 +116,34 @@ nuppu_seaded = {
 }
 
 ctk.CTkLabel(frame, text="Valige näo osad:", **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=5)
-
 ctk.CTkButton(frame, text="Silmad", command=nupp_silmad, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=3)
 ctk.CTkButton(frame, text="Nina", command=nupp_nina, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=3)
 ctk.CTkButton(frame, text="Suu", command=nupp_suu, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=3)
 ctk.CTkButton(frame, text="Juuksur", command=nupp_juuksur, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=3)
 ctk.CTkButton(frame, text="Aksessuaarid", command=nupp_acs, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=3)
-
-
 ctk.CTkButton(frame, text="Salvesta nägu", command=salvesta_nägu, **nuppu_seaded, font=("Segoe UI Emoji", 20)).pack(pady=10)
-
 
 frame_mus = ctk.CTkFrame(frame)
 frame_mus.pack(padx=10, pady=10)
 
-ctk.CTkButton(frame_mus, text="Mängi muusikat", fg_color="grey", command=mängi_muusika, font=("Segoe UI Emoji", 20)).pack(side="left", pady=10)
-ctk.CTkButton(frame_mus, text="Peata muusika", fg_color="grey", command=peata_muusika, font=("Segoe UI Emoji", 20)).pack(side="left", pady=10)
+muusika_nupp = ctk.CTkButton(
+    frame_mus,
+    text="Mängi muusikat",
+    fg_color="grey",
+    command=toggle_muusika,
+    font=("Segoe UI Emoji", 20)
+)
+muusika_nupp.pack(pady=10)
+
+
+
+
+
+
+
+
+
+
+
 
 app.mainloop()
