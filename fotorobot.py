@@ -1,5 +1,6 @@
 from tkinter.messagebox import showinfo
 from tkinter import simpledialog, Canvas
+import tkinter as tk
 from PIL import Image, ImageTk
 import customtkinter as ctk
 import pygame
@@ -9,9 +10,9 @@ import os
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-pygame.mixer.init()
-pygame.mixer.music.load("Betsy feat. Мария Янковская - Сигма Бой.mp3")  
-muusika_mängib = False  
+# pygame.mixer.init()
+# pygame.mixer.music.load("Betsy feat. Мария Янковская - Сигма Бой.mp3")  
+# muusika_mängib = False  
 
 pildid = {}
 objektid = {}
@@ -26,11 +27,11 @@ osa_pildid = {
 }
 
 osa_index = {
-    "silmad": 0,
+    "silmad": 1,
     "nina": 0,
-    "suu": 0,
-    "juuksur": 0,
-    "acs": 0
+    "suu": 2,
+    "juuksur":3,
+    "acs": 3
 }
 
 def uuenda_osa(nimi, x, y):
@@ -40,22 +41,22 @@ def uuenda_osa(nimi, x, y):
     if olemas.get(nimi):
         canvas.delete(objektid[nimi])
 
-    pil_img = Image.open(fail).convert("RGBA").resize((400, 440))
+    pil_img = Image.open(fail).convert("RGBA").resize((400, 420))
     tk_img = ImageTk.PhotoImage(pil_img)
     pildid[nimi] = tk_img
     objektid[nimi] = canvas.create_image(x, y, image=tk_img)
     olemas[nimi] = True
 
-def toggle_muusika():
-    global muusika_mängib
-    if muusika_mängib:
-        pygame.mixer.music.stop()
-        muusika_nupp.configure(text="Mängi muusikat")
-        muusika_mängib = False
-    else:
-        pygame.mixer.music.play(loops=-1)
-        muusika_nupp.configure(text="Peata muusika")
-        muusika_mängib = True
+# def toggle_muusika():
+#     global muusika_mängib
+#     if muusika_mängib:
+#         pygame.mixer.music.stop()
+#         muusika_nupp.configure(text="Mängi muusikat")
+#         muusika_mängib = False
+#     else:
+#         pygame.mixer.music.play(loops=-1)
+#         muusika_nupp.configure(text="Peata muusika")
+#         muusika_mängib = True
 
 def salvesta_nägu():
     failinimi = simpledialog.askstring("Salvesta pilt", "Sisesta faili nimi (ilma laiendita):")
@@ -84,29 +85,30 @@ app = ctk.CTk()
 app.geometry("800x500")
 app.title("Näo looja")
 
-canvas = Canvas(app, width=400, height=400, bg="white")
+canvas = Canvas(app, width=400, height=350, bg="white")
 canvas.pack(side="right", padx=10, pady=10)
 
 
 pil_img = Image.open("head.png").convert("RGBA").resize((400, 400))
 tk_img = ImageTk.PhotoImage(pil_img)
 pildid["nägu"] = tk_img
-objektid["nägu"] = canvas.create_image(200, 200, image=tk_img)
+objektid["nägu"] = canvas.create_image(200, 220, image=tk_img)
 olemas["nägu"] = True
 
 
 for osa in osa_pildid.keys():
-    uuenda_osa(osa, 200, 200)
+    uuenda_osa(osa, 200, 220)
 
 
-def nupp_silmad(): uuenda_osa("silmad", 200, 200)
-def nupp_nina(): uuenda_osa("nina", 200, 200)
-def nupp_suu(): uuenda_osa("suu", 200, 200)
-def nupp_juuksur(): uuenda_osa("juuksur", 200, 200)
-def nupp_acs(): uuenda_osa("acs", 200, 200)
+def nupp_silmad(): uuenda_osa("silmad", 200, 220)
+def nupp_nina(): uuenda_osa("nina", 200, 220)
+def nupp_suu(): uuenda_osa("suu", 200, 220)
+def nupp_juuksur(): uuenda_osa("juuksur", 200, 220)
+def nupp_acs(): uuenda_osa("acs", 200, 220)
 
 frame = ctk.CTkFrame(app)
 frame.pack(side="left", padx=10, pady=10)
+
 
 nuppu_seaded = {
     "width": 150, "height": 40,
@@ -126,14 +128,14 @@ ctk.CTkButton(frame, text="Salvesta nägu", command=salvesta_nägu, **nuppu_sead
 frame_mus = ctk.CTkFrame(frame)
 frame_mus.pack(padx=10, pady=10)
 
-muusika_nupp = ctk.CTkButton(
-    frame_mus,
-    text="Mängi muusikat",
-    fg_color="grey",
-    command=toggle_muusika,
-    font=("Segoe UI Emoji", 20)
-)
-muusika_nupp.pack(pady=10)
+# muusika_nupp = ctk.CTkButton(
+#     frame_mus,
+#     text="Mängi muusikat",
+#     fg_color="grey",
+#     command=toggle_muusika,
+#     font=("Segoe UI Emoji", 20)
+# )
+# muusika_nupp.pack(pady=10)
 
 
 
